@@ -1,5 +1,9 @@
 import { Context } from "hono";
 
+export const config = {
+  runtime: "edge",
+};
+
 export async function postData(
   c: Context,
   corsHeaders: Record<string, string>

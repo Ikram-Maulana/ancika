@@ -1,5 +1,9 @@
 import { Context } from "hono";
 
+export const config = {
+  runtime: "edge",
+};
+
 export async function welcome(c: Context) {
   return c.text(
     ` _______________________________\n` +
