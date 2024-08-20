@@ -1,14 +1,13 @@
 {
   "name": "ancika",
-  "scripts": {
-    "dev": "wrangler dev src/index.ts",
-    "deploy": "wrangler deploy --minify src/index.ts"
-  },
   "dependencies": {
     "hono": "^4.5.6"
   },
+  "scripts": {
+    "start": "vercel dev",
+    "deploy": "vercel"
+  },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240815.0",
-    "wrangler": "^3.72.0"
+    "vercel": "^36.0.0"
   }
 }

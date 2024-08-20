@@ -4,7 +4,7 @@ export async function postData(
   c: Context,
   corsHeaders: Record<string, string>
 ) {
-  const { umamiUrl } = c.get("umamiUrl");
+  const umamiUrl = c.get("umamiUrl");
   const request = new Request(c.req.raw);
   request.headers.delete("cookie");
 
@@ -13,7 +13,7 @@ export async function postData(
 
   response = new Response(js, {
     headers: {
-      ...response.headers,
+      "Content-Type": "application/javascript; charset=utf-8",
       ...corsHeaders,
       "Access-Control-Allow-Headers":
         response.headers.get("Access-Control-Request-Headers") || "",
