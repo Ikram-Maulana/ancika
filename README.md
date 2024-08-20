@@ -1,36 +1,77 @@
 # Ancika
 
-Ancika is a simple and lightweight Cloudflare Worker to solve Umami Analytics issue with Anti-Adblockers. This project build with [Hono](https://hono.dev/) and [Cloudflare Workers](https://workers.cloudflare.com/) integration.
+Ancika is a simple and lightweight worker to solve Umami Analytics issue with Anti-Adblockers. This project build with [Hono](https://hono.dev/) and [Vercel](https://vercel.com/) integration.
 
 ## Usage
 
 1. Fork and clone this repository
-2. Install dependencies with `npm install`
+2. Install dependencies with `bun install`
 3. You can change the `scriptName` in `index.ts` with your desired value
 
-## Deploy from Wrangler
+## Deploy from Vercel
 
-Before deploying code to Cloudflare, you need to change the value of `ENDPOINT_NAME` and `UMAMI_URL` in `wrangler.toml` with your desired value.
-
-Delete the .github folder if you don't want to use Github Action. then, you can push your code to the repository.
-
-After that, you can deploy the code to Cloudflare with the following command:
+Before deploying code to Vercel, you need to make `.env` file with the following content:
 
 ```bash
-npm run deploy
+ENDPOINT_NAME="your-endpoint-name"
+UMAMI_URL="your-umami-url"
 ```
 
-## Deploy from Github Action
+After that, you can deploy the code to Vercel with the following command:
 
-Before deploying code to Cloudflare via CI, you need a cloudflare token. you can manager from here: https://dash.cloudflare.com/profile/api-tokens
+```bash
+bun run deploy
+```
 
-If it's a newly created token, select the Edit Cloudflare Workers template, if you have already another token, make sure the token has the corresponding permissions(No, token permissions are not shared between cloudflare page and cloudflare worker).
+## Connecting Your Project to This Worker using Next.js
 
-then go to your Github repository settings dashboard: Settings->Secrets and variables->Actions->Repository secrets, and add a new secret with the name CLOUDFLARE_API_TOKEN.
+You can connect your project to this worker using Next.js with the following code:
 
-After that, you can push your code to the repository, and the Github action will automatically deploy the code to Cloudflare.
+```typescript
+import Script from 'next/script'
 
-Open Cloudflare Workers dashboard, and you will see the new worker has been deployed. Add variable `ENDPOINT_NAME` and `UMAMI_URL` with your desired value into `WorkerName`->Settings->Variables->Add variable. Then, click the deploy button to redeploy the worker.
+...rest of the code
+<Script
+  src="/yourScriptName.js"
+  strategy="beforeInteractive"
+  data-website-id="your-website-id"
+/>
+...rest of the code
+```
+
+After that, you can modify the next.config.js to add the following code:
+
+```javascript
+..rest of the code
+  async rewrites() {
+    return [
+      {
+        source: "/yourScriptName.js",
+        destination: "https://your-endpoint-name.vercel.app/yourScriptName",
+      },
+    ];
+  },
+  crossOrigin: "anonymous",
+  skipTrailingSlashRedirect: true,
+..rest of the code
+```
+
+> Note: If you using cloudflare as your DNS provider, you should follow the configuration below:
+
+- Go to your Cloudflare dashboard
+
+- Click on the domain you want to configure
+
+- Click on the "rules" tab
+
+- Click on "Create Page Rule"
+
+- Add your project endpoint that using this worker
+  `https://your-endpoint-name.vercel.app/yourScriptName`
+
+- Click on "Add a Setting" and choose "Cache Level" to "Bypass"
+
+> The above configuration will bypass the cache for the worker endpoint, so the worker will prevent your script from being converted to a “plain text” Content Type by Cloudflare.
 
 ## Resources
 
